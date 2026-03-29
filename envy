@@ -3,7 +3,7 @@
 
 set -e
 
-# Configs
+## Configs
 if [[ $ENV_HOME ]]; then
 	# FIXME: wrong path if user previously set divergent XDG_CONFIG_HOME
 	env_files_conf="$ENV_HOME/.config/envy/env_files.conf"
@@ -27,7 +27,7 @@ if [[ -s "$env_commands_conf" ]]; then
 	done < "$env_commands_conf"
 fi
 
-# Arguments
+## Arguments
 case "$1" in
 	ssh|sudo|su) ;;
 	*)
@@ -37,8 +37,9 @@ case "$1" in
 		;;
 esac
 
-# Environment
+## Environment
 env=$( tar cJf - -h -C "${ENV_HOME:-$HOME}" -- ".bashrc" "${env_files[@]}" | base64 )
+# `--rcfile` for interactive shells, `BASH_ENV` for non-interactive ones
 script="
 	set -e
 	export SHELL=\"/bin/bash\"
@@ -47,10 +48,10 @@ script="
 	echo ''  >> \"\$ENV_HOME/.bashrc\"
 	echo 'trap -- \"rm -rf \\\"\$ENV_HOME\\\"\" EXIT' >> \"\$ENV_HOME/.bashrc\"
 	echo ${env_commands@Q} >> \"\$ENV_HOME/.bashrc\"
-	exec bash --rcfile \"\$ENV_HOME/.bashrc\" \"\$@\"
+	BASH_ENV=\"\$ENV_HOME/.bashrc\" exec bash --rcfile \"\$ENV_HOME/.bashrc\" \"\$@\"
 "
 
-# Business
+## Business
 subcmd="$1"; shift; case "$subcmd" in
 	ssh)
 		##LC_ENV="$env" ssh -t -o SendEnv=LC_ENV -o RemoteCommand="$script" "$@"
