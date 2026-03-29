@@ -52,7 +52,7 @@ To do tab-completion with envy, copy or link `bash-completion` into `~/.local/sh
 
 ## Inspiration
 
-Most of the work started in my [LC_BASHRC](https://github.com/haarp/dotfiles/blob/e5456a112e57114a0bcf075909c471731ae611d6/.bashrc#L13) trick I previously used in my by bashrc. By abusing most ssh server's defaults of accepting `LC_*` environment variables, I could take the bashrc with me through that, then source it on the other side with ssh's `RemoteCommand`. sudo and su worked similarly to how they do now, by writing temporary scripts.
+Most of the work started in my [LC_BASHRC](https://github.com/haarp/dotfiles/blob/e5456a112e57114a0bcf075909c471731ae611d6/.bashrc#L13) trick I previously used in my bashrc. By abusing most ssh server's defaults of accepting `LC_*` environment variables, I could take the bashrc with me through that, then source it on the other side with ssh's `RemoteCommand`. sudo and su worked similarly to how they do now, by writing temporary scripts.
 
 Minor credits for the idea of making envy a wrapper go to [sshrc](https://github.com/cdown/sshrc). It attempts to do something similar, although more complex and much less powerful.
 
