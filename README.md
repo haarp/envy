@@ -4,7 +4,7 @@ Take your environment with you when use `ssh`, `sudo` or `su` :3
 
 envy's goal is to avoid having to duplicate, deploy and maintain your environment across various user accounts and hosts, by having a single central source-of-truth. It does this by wrapping around the commands `ssh`, `sudo` and `su` and bringing along predefined files. These files become available under a temporary directory exported as the `$ENV_HOME` environment variable on the target.
 
-envy does not require symlinks to work. envy by itself does *not* modify anything inside the target's `$HOME` or leave temporary files around. Multiple people/sessions could be logged into the same user on the same host at the same time without interferring with each other.
+envy does not create symlinks to work. envy by itself does *not* modify anything inside the target's `$HOME` or leave temporary files around. Multiple people/sessions could be logged into the same user on the same host at the same time without interferring with each other.
 
 envy can be *chained*! If you add envy itself to `envy.d`, it becomes available on the target. Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
 
