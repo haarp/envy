@@ -40,7 +40,7 @@ Example config files are available as `env_files.conf.example` and `env_commands
 ## Caveats (WIP)
 
 - ssh: Cannot be used together with a command, e.g. this won't work: `envy ssh user@server 'ls -l'`.
-- ssh: The new shell might be considered a non-login shell, thus skipping displaying the MOTD and such
+- ssh: The new shell might be considered a non-login shell, thus skipping displaying the MOTD and such.
 - ssh: If your env becomes very large, connections to some ssh servers like `dropbear` might mysteriously fail with errors such as `Broken pipe`. See [here](https://github.com/mkj/dropbear/issues/177) for details.
 - sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive and skips sourcing the bashrc.
 - sudo: Will start an interactive session by default, don't use `-i`.
