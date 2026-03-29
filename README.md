@@ -32,9 +32,9 @@ Example config files are available as `env_files.conf.example` and `env_commands
 
 ## Terminology
 
-__master__ is the machine originally executing envy and which contains the environment to be taken along. __target__ is the user or host that the environment will be transferred to. This can be another user on the same machine (usually `root` in the case of `sudo`/`su`) or another host (in the case of `ssh`)
-
-__environment__ describes the `~/.bashrc` along with other dotfiles of the user's choosing. We are not actually taking environment variables with us, if you need them, have your bashrc set them up.
+- __master__ is the machine originally executing envy and which contains the envy config files and environment and to be taken along.
+- __target__ is the user or host that the environment will be transferred to. This can be another user on the same machine (usually `root` in the case of `sudo`/`su`) or another host (in the case of `ssh`)
+- __environment__ describes the `~/.bashrc` along with other dotfiles of the user's choosing. We are not actually taking environment variables with us, if you need them, have your bashrc set them up.
 
 
 ## Caveats (WIP)
