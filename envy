@@ -5,7 +5,6 @@ set -e
 
 ## Configs
 if [[ $ENV_HOME ]]; then
-	# FIXME: wrong path if user previously set divergent XDG_CONFIG_HOME
 	include_dir="$ENV_HOME"
 else
 	include_dir="${XDG_CONFIG_HOME:-$HOME/.config/}/envy.d/"
