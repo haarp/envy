@@ -52,7 +52,7 @@ Example config is available as `envy.d.example/`. Copy it to `~/.config/envy.d` 
 - ssh: Cannot be used together with a command, e.g. this won't work: `envy ssh user@server 'ls -l'`.
 - ssh: The new shell might be considered a non-login shell, thus skipping displaying the MOTD and such.
 - ssh: If your env becomes very large, connections to some ssh servers like `dropbear` might mysteriously fail with errors such as `Broken pipe`. See [here](https://github.com/mkj/dropbear/issues/177) for details.
-- sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. We use `$BASH_ENV` to have it source the bashrc regardless, so your bashrc should *not* `return` in this condition. `shopt -s expand_aliases` might also be a worthwhile addition.
+- sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. We use [BASH_ENV](https://www.gnu.org/software/bash/manual/bash.html#index-BASH_005fENV) to have it source the bashrc regardless, so set up your bashrc to *not* `return` in non-interactive shells. `shopt -s expand_aliases` might also be a worthwhile addition.
 - sudo: Will start an interactive session if no command is given, don't use `-i`.
 - If you require different configurations for different hosts, have your `.bashrc` handle that.
 
