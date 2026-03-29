@@ -12,6 +12,10 @@ envy can be *chained*! If you add envy itself and its configs to `env_files.conf
 
 Prepend `envy` to the desired command. e.g. `envy ssh user@server` or `envy sudo`.
 
+## Example
+
+You add `.gitconfig` and `.config/htop/htoprc` to `env_files.conf`. envy will transfer these files and `.bashrc` to the target. On the target a directory `/tmp/env-username.gQGnVn` will be created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and the shell will launch using that bashrc.
+
 ## Requirements
 
 - bash-4.4+ (might be compatible with zsh too, untested)
