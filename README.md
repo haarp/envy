@@ -14,7 +14,7 @@ Prepend `envy` to the desired command. e.g. `envy ssh user@server` or `envy sudo
 
 ## Example
 
-You add `.gitconfig` and `.config/htop/htoprc` to `env_files.conf`. envy will transfer these files and `.bashrc` to the target. On the target a directory `/tmp/env-username.gQGnVn` will be created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and the shell will launch using that bashrc.
+You add `.gitconfig` and `.config/htop/htoprc` to `env_files.conf`. envy will transfer these files and `.bashrc` to the target. On the target a directory `/tmp/env-username.gQGnVn` will be created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and exported as `$ENV_HOME`. The shell will launch using that bashrc.
 
 ## Requirements
 
