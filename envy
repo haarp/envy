@@ -25,7 +25,7 @@ case "$1" in
 esac
 
 ## Environment
-env="$( tar cJf - -h -C "$include_dir" --exclude ".config/envy/include.d" -- "." | base64 )"
+env="$( tar cJf - -h -C "$include_dir" -- "." | base64 )"
 # `--rcfile` for interactive shells, `BASH_ENV` for non-interactive ones
 script="
 	set -e
