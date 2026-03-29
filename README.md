@@ -4,6 +4,10 @@ Take your environment with you when use `ssh`, `sudo` or `su` :3
 
 envy's goal is to avoid having to duplicate, deploy and maintain your environment across various user accounts and hosts, by having a single central source-of-truth. It does this by wrapping around the commands `ssh`, `sudo` and `su` and bringing along predefined files. These files become available under a temporary directory defined under the `$ENV_HOME` environment variable on the target
 
+envy does not require symlinks to work. envy by itself does *not* modify anything inside the target's `$HOME` or leave temporary files around. Multiple people/sessions could be logged into the same user on the same host at the same time without interferring with each other.
+
+envy can be *chained*! If you add envy itself and its configs to `env_files.conf`, it becomes available on the target. Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
+
 ## Usage
 
 Prepend `envy` to the desired command. e.g. `envy ssh user@server` or `envy sudo`.
@@ -25,16 +29,6 @@ These config files are currently read:
 Lines starting with `#` are ignored.
 
 Example config files are available as `env_files.conf.example` and `env_commands.conf.example`.
-
-## Explanation
-
-envy takes your `~/.bashrc` and other files defined in `env_files.conf` and copies them to a temporary directory on the target. On the target's side, this directory will be available as the `$ENV_HOME` environment variable. Finally it executes the commands defined in `env_commands.conf` to make programs aware of this temporay home.
-
-When the session ends, `$ENV_HOME` will be automatically deleted again via an `EXIT` trap.
-
-envy does not require symlinks to work. envy by itself does *not* modify anything inside the target's `$HOME` or leave temporary files around. Multiple people/sessions could be logged into the same user on the same host at the same time without interferring with each other.
-
-envy can be *chained*! If you add envy itself and its configs to `env_files.conf`, it becomes available on the target. Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
 
 ## Terminology
 
