@@ -16,10 +16,18 @@ Prepend `envy` to the desired command. e.g. `envy ssh user@server` or `envy sudo
 
 You add `.bashrc`, `.gitconfig` and `.config/htop/htoprc` to `envy.d`. You run `envy ssh user@host`. envy will transfer these files to the target. On the target a directory `/tmp/env-username.gQGnVn` will be created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and exported as `$ENV_HOME`. The shell will launch using that bashrc.
 
-## Requirements
+## Installation
+
+Make sure you meet these requirements (should be easy):
 
 - bash-4.4+ (might be compatible with zsh too, untested)
 - tar, xz-utils, base64(coreutils) (on both ends!)
+
+Then to install, copy or link `envy` to somewhere within your `$PATH`, e.g. `/usr/bin/` or `~/bin/`. Create `~/.config/envy.d/` and start putting symlinks in there.
+
+To enable envy chaining: Link `envy` itself into `.config/envy.d/bin/envy`.
+
+For tab-completion: Copy or link `bash-completion` into `/usr/share/bash-completion/completions/envy` or `~/.local/share/bash-completion/completions/envy`.
 
 ## Configuration
 
@@ -45,10 +53,6 @@ Example config is available as `envy.d.example/`. Copy it to `$HOME/.config/envy
 - sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. So your bashrc should *not* `return` in this condition. `shopt -s expand_aliases` might also be a worthwhile addition.
 - sudo: Will start an interactive session if no command is given, don't use `-i`.
 - If you require different configurations for different hosts, have your `.bashrc` handle that.
-
-## bash-completion
-
-To do tab-completion with envy, copy or link `bash-completion` into `~/.local/share/bash-completion/completions/envy`.
 
 ## Inspiration
 
