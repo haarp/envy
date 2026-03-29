@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# Environment carrier :3
+
+# TODO: minify bashrc?
+# strip leading whitespace, empty lines and comments
+#sed -e 's/^[\t ]*//' -e '/^$/d' -e 's/[\t ]\+#.*$//' -e '/^#/d' ~/.bashrc
+
+# Configs
+if [[ $ENV_HOME ]]; then
+	# FIXME: wrong path if user previously set divergent XDG_CONFIG_HOME
+	env_files_conf="$ENV_HOME/.config/envy/env_files.conf"
+	env_commands_conf="$ENV_HOME/.config/envy/env_commands.conf"
+else
+	env_files_conf="${XDG_CONFIG_HOME:-$HOME/.config/}/envy/env_files.conf"
+	env_commands_conf="${XDG_CONFIG_HOME:-$HOME/.config/}/envy/env_commands.conf"
+fi
+env_files=()
+if [[ -s "$env_files_conf" ]]; then
+	while read -r line; do
+		[[ "$line" =~ ^# ]] && continue
+		env_files+=("$line")
+	done < "$env_files_conf"
+fi
+env_commands=''
+if [[ -s "$env_commands_conf" ]]; then
+	while read -r line; do
+		[[ "$line" =~ ^# ]] && continue
+		env_commands+="$line"$'\n'
+	done < "$env_commands_conf"
+fi
+
+# Arguments
+case "$1" in
+	ssh|sudo|su) ;;
+	*)
+		echo "Take your environment with you through ssh|sudo|su! :3" >&2
+		echo "Usage: $(basename "$0") <ssh|sudo|su> [args...]" >&2
+		exit 1
+		;;
+esac
+
+# Environment
+env=$( tar cJf - -h -C "${ENV_HOME:-$HOME}" -- ".bashrc" "${env_files[@]}" | base64 ) &&
+script="
+	set -e
+	export SHELL=\"/bin/bash\"
+	export ENV_HOME=\"\$( mktemp -d -p \"\${TMPDIR:-/tmp}\" -t \"env-\$USER.XXXXXX\" )\"
+	<<< \"$env\" base64 -d | tar xJf - -C \"\$ENV_HOME\"
+	echo ''  >> \"\$ENV_HOME/.bashrc\"
+	echo 'trap -- \"rm -rf \\\"\$ENV_HOME\\\"\" EXIT' >> \"\$ENV_HOME/.bashrc\"
+	echo ${env_commands@Q} >> \"\$ENV_HOME/.bashrc\"
+	exec bash --rcfile \"\$ENV_HOME/.bashrc\" \"\$@\"
+" &&
+
+# Business
+subcmd="$1"; shift; case "$subcmd" in
+	ssh)
+		##LC_ENV="$env" ssh -t -o SendEnv=LC_ENV -o RemoteCommand="$script" "$@"
+		ssh -t -o RemoteCommand="${script//%/%%}" "$@"
+		;;
+	sudo|su)
+		cmdfile="$(mktemp --suffix=".envy")" &&
+		echo '#!/bin/bash' > "$cmdfile" &&
+		echo "rm -f \"$cmdfile\"" >> "$cmdfile" &&
+		echo "$script" >> "$cmdfile" &&
+		chmod +rx "$cmdfile" &&	# make executable; and world-readable for `sudo -u luser`
+
+		if [[ "$subcmd" == "sudo" ]]; then
+			SHELL="$cmdfile" sudo -s "$@"
+		else
+			su -s "$cmdfile" "$@"
+		fi
+
+		rm -f "$cmdfile"	# if above failed
+		;;
+esac

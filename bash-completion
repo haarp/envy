@@ -1,0 +1,21 @@
+_comp_cmd_envy() {
+	if [[ $COMP_CWORD -eq 1 ]]; then
+		COMPREPLY=( $(compgen -W "ssh sudo su" -- "${COMP_WORDS[COMP_CWORD]}") )
+		return 0
+	fi
+
+	# current completion for subcmd
+	local subcmd="${COMP_WORDS[1]}" subcmd_comp temp
+	__load_completion "$subcmd"
+	read -ra temp <<< "$(complete -p "$subcmd")"
+	subcmd_comp="${temp[2]}"
+	[[ "$subcmd_comp" ]] || return 1
+
+	# fool the next call
+	COMP_WORDS=( "${COMP_WORDS[@]:1}" )
+	((COMP_CWORD--))
+
+	"$subcmd_comp" "$subcmd"
+}
+
+complete -F _comp_cmd_envy envy

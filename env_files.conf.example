@@ -1,0 +1,8 @@
+.config/git/config
+.config/htop/htoprc
+.config/lesskey
+.config/mc/
+.config/screen/screenrc
+# bring envy itself :D
+bin/envy
+.config/envy

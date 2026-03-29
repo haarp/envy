@@ -1,0 +1,7 @@
+# git cannot be controlled through env var :(
+alias git="git -c \"include.path=$ENV_HOME/.config/git/config\""
+export HTOPRC="$ENV_HOME/.config/htop/htoprc"
+export LESSKEYIN="$ENV_HOME/.config/lesskey"
+export MC_PROFILE_ROOT="$ENV_HOME"
+export MC_HOME="$MC_PROFILE_ROOT"	# needed by older mc before 4.8.19 (239a8d0117)
+export SCREENRC="$ENV_HOME/.config/screen/screenrc"
