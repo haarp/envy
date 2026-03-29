@@ -6,7 +6,7 @@ envy's goal is to avoid having to duplicate, deploy and maintain your environmen
 
 envy does not require symlinks to work. envy by itself does *not* modify anything inside the target's `$HOME` or leave temporary files around. Multiple people/sessions could be logged into the same user on the same host at the same time without interferring with each other.
 
-envy can be *chained*! If you add envy itself and its configs to `env_files.conf`, it becomes available on the target. Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
+envy can be *chained*! If you add envy itself to `envy.d`, it becomes available on the target. Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
 
 ## Usage
 
@@ -14,7 +14,7 @@ Prepend `envy` to the desired command. e.g. `envy ssh user@server` or `envy sudo
 
 ## Example
 
-You add `.gitconfig` and `.config/htop/htoprc` to `env_files.conf`. envy will transfer these files and `.bashrc` to the target. On the target a directory `/tmp/env-username.gQGnVn` will be created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and exported as `$ENV_HOME`. The shell will launch using that bashrc.
+You add `.bashrc`, `.gitconfig` and `.config/htop/htoprc` to `envy.d`. envy will transfer these files to the target. On the target a directory `/tmp/env-username.gQGnVn` will be created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and exported as `$ENV_HOME`. The shell will launch using that bashrc.
 
 ## Requirements
 
@@ -23,23 +23,19 @@ You add `.gitconfig` and `.config/htop/htoprc` to `env_files.conf`. envy will tr
 
 ## Configuration
 
-Configuration files live under `$XDG_CONFIG_HOME/envy/`, which defaults to `$HOME/.config/envy/`. The exception to this is if you're already inside an envy session, then the path changes to `$ENV_HOME/.config/envy/`
+envy is configured through `$XDG_CONFIG_HOME/envy.d/`, which defaults to `$HOME/.config/envy.d/`. The exception to this is if you're already inside an envy session, then the path changes to `$ENV_HOME/.config/envy.d/`
 
-These config files are currently read:
+Files underneath here are brought along into the target's `$ENV_HOME`. It is highly recommended to use symlinks where appropiate. Symlinks will be followed. Structure will be kept. A prime candidate to put here is your `.bashrc`. You may want to include `envy` itself to make it available on the target aswell.
 
-- __env_files.conf__: List of newline-separated files to bring into `$ENV_HOME`. Files are relative to `$HOME`, do NOT use absolute paths! Paths will be kept. Symlinks will be followed and their target used instead. `.bashrc` is always implicitly included.
-- __env_commands.conf__: List of newline-separated commands to execute when launching the new shell. Will be appended to the target's `.bashrc`. Mainly used to configure applications to use `$ENV_HOME` over `$HOME`. Uses shell syntax and resolves variables on the target accordingly.
+The special file `env_commands` if present will be sourced at the end of the target's `.bashrc` when the shell starts. Its main use is to configure applications to use `$ENV_HOME` over `$HOME`. Uses shell syntax and resolves variables on the target accordingly.
 
-Lines starting with `#` are ignored.
-
-Example config files are available as `env_files.conf.example` and `env_commands.conf.example`.
+Example config is available as `envy.d.example/`. Copy it to `$HOME/.config/envy.d` and rename.
 
 ## Terminology
 
 - __master__ is the machine originally executing envy and contains the envy config files and environment to bring.
 - __target__ is the user or host the environment will be transferred to. This can be another user on the same machine (usually `root` in the case of `sudo`/`su`) or another host (in the case of `ssh`)
-- __environment__ describes the `~/.bashrc` along with other dotfiles of the user's choosing. We are not actually taking environment variables with us, if you need them, have your bashrc set them up.
-
+- __environment__ describes the files beneath `envy.d/` we bring. We are not actually taking environment variables with us, if you need them, have your bashrc set them up.
 
 ## Caveats (WIP)
 
@@ -48,11 +44,11 @@ Example config files are available as `env_files.conf.example` and `env_commands
 - ssh: If your env becomes very large, connections to some ssh servers like `dropbear` might mysteriously fail with errors such as `Broken pipe`. See [here](https://github.com/mkj/dropbear/issues/177) for details.
 - sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. So your bashrc should *not* `return` in this condition. `shopt -s expand_aliases` might also be a worthwhile addition.
 - sudo: Will start an interactive session if no command is given, don't use `-i`.
+- If you require different configurations for different hosts, have your `.bashrc` handle that.
 
 ## bash-completion
 
 To do tab-completion with envy, copy or link `bash-completion` into `~/.local/share/bash-completion/completions/envy`.
-
 
 ## Inspiration
 
