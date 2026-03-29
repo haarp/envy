@@ -27,8 +27,8 @@ Configuration files live under `$XDG_CONFIG_HOME/envy/`, which defaults to `$HOM
 
 These config files are currently read:
 
-- __env_files.conf__: List of newline-separated files to take with us into `$ENV_HOME`. Files are relative to `$HOME`, do NOT use absolute paths! Paths will be maintained underneath `$ENV_HOME`. Symlinks will be followed and their target used instead. `.bashrc` is always implicitly included.
-- __env_commands.conf__: List of newline-separated commands to execute when spawning the new shell. Will be appended to the remote `.bashrc`. Mainly used to configure applications to use `$ENV_HOME` over `$HOME`. Uses shell syntax and resolves variables in the target shell accordingly.
+- __env_files.conf__: List of newline-separated files to bring into `$ENV_HOME`. Files are relative to `$HOME`, do NOT use absolute paths! Paths will be kept. Symlinks will be followed and their target used instead. `.bashrc` is always implicitly included.
+- __env_commands.conf__: List of newline-separated commands to execute when launching the new shell. Will be appended to the target's `.bashrc`. Mainly used to configure applications to use `$ENV_HOME` over `$HOME`. Uses shell syntax and resolves variables on the target accordingly.
 
 Lines starting with `#` are ignored.
 
@@ -36,8 +36,8 @@ Example config files are available as `env_files.conf.example` and `env_commands
 
 ## Terminology
 
-- __master__ is the machine originally executing envy and which contains the envy config files and environment to be taken along.
-- __target__ is the user or host that the environment will be transferred to. This can be another user on the same machine (usually `root` in the case of `sudo`/`su`) or another host (in the case of `ssh`)
+- __master__ is the machine originally executing envy and contains the envy config files and environment to bring.
+- __target__ is the user or host the environment will be transferred to. This can be another user on the same machine (usually `root` in the case of `sudo`/`su`) or another host (in the case of `ssh`)
 - __environment__ describes the `~/.bashrc` along with other dotfiles of the user's choosing. We are not actually taking environment variables with us, if you need them, have your bashrc set them up.
 
 
@@ -46,8 +46,8 @@ Example config files are available as `env_files.conf.example` and `env_commands
 - ssh: Cannot be used together with a command, e.g. this won't work: `envy ssh user@server 'ls -l'`.
 - ssh: The new shell might be considered a non-login shell, thus skipping displaying the MOTD and such.
 - ssh: If your env becomes very large, connections to some ssh servers like `dropbear` might mysteriously fail with errors such as `Broken pipe`. See [here](https://github.com/mkj/dropbear/issues/177) for details.
-- sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. So your bashrc should not `return` in this condition. `shopt -s expand_aliases` might also be a worthwhile addition.
-- sudo: Will start an interactive session if no command is suppplied, don't use `-i`.
+- sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. So your bashrc should *not* `return` in this condition. `shopt -s expand_aliases` might also be a worthwhile addition.
+- sudo: Will start an interactive session if no command is given, don't use `-i`.
 
 ## bash-completion
 
