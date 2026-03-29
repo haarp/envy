@@ -43,7 +43,7 @@ Example config files are available as `env_files.conf.example` and `env_commands
 - ssh: The new shell might be considered a non-login shell, thus skipping displaying the MOTD and such.
 - ssh: If your env becomes very large, connections to some ssh servers like `dropbear` might mysteriously fail with errors such as `Broken pipe`. See [here](https://github.com/mkj/dropbear/issues/177) for details.
 - sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. So your bashrc should not `return` in this condition. `shopt -s expand_aliases` might also be a worthwhile addition.
-- sudo: Will start an interactive session by default, don't use `-i`.
+- sudo: Will start an interactive session if no command is suppplied, don't use `-i`.
 
 ## bash-completion
 
