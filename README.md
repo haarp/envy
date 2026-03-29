@@ -8,6 +8,8 @@ envy does not create symlinks to work. envy by itself does *not* touch the targe
 
 envy can be *chained*! Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
 
+envy tries to source your bashrc even for non-interactive shells. Yes, you can finally do `envy sudo <that-alias-you-always-wanted-to-use>`!
+
 ## Usage
 
 Prepend `envy` to the desired command. e.g. `envy ssh user@server` or `envy sudo`.
