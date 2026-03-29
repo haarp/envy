@@ -2,11 +2,11 @@
 
 Take your environment with you when use `ssh`, `sudo` or `su` :3
 
-envy's goal is to avoid having to duplicate, deploy and maintain your environment across various user accounts and hosts, by having a single central source-of-truth. It does this by wrapping around the commands `ssh`, `sudo` and `su` and bringing along predefined files. These files become available under a temporary directory exported as the `$ENV_HOME` environment variable on the target.
+envy's goal is to avoid having to duplicate, deploy and maintain your environment across user accounts and hosts, by having a single central source-of-truth. It wraps around `ssh`, `sudo` and `su` and brings along predefined files. These files become available under the temporary directory `$ENV_HOME` on the target.
 
-envy does not create symlinks to work. envy by itself does *not* modify anything inside the target's `$HOME` or leave temporary files around. Multiple people/sessions could be logged into the same user on the same host at the same time without interferring with each other.
+envy does not create symlinks to work. envy by itself does *not* touch the target's `$HOME` or leave temporary files around. Multiple people/sessions could be logged into the same account on the same host at the same time without interferring with each other.
 
-envy can be *chained*! If you add envy itself to `envy.d`, it becomes available on the target. Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
+envy can be *chained*! Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
 
 ## Usage
 
@@ -14,7 +14,7 @@ Prepend `envy` to the desired command. e.g. `envy ssh user@server` or `envy sudo
 
 ## Example
 
-You add `.bashrc`, `.gitconfig` and `.config/htop/htoprc` to `envy.d`. You run `envy ssh user@host`. envy will transfer these files to the target. On the target a directory `/tmp/env-username.gQGnVn` will be created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and exported as `$ENV_HOME`. The shell will launch using that bashrc.
+You add `.bashrc`, `.gitconfig` and `.config/htop/htoprc` to `envy.d`. You run `envy ssh user@host`. envy will transfer these files to the target. On the target a directory `/tmp/env-username.gQGnVn` is created with contents `.bashrc`, `.gitconfig` and `.config/htop/htoprc`, and exported as `$ENV_HOME`. The shell launches using that bashrc.
 
 ## Installation
 
@@ -23,27 +23,27 @@ Make sure you meet these requirements (should be easy):
 - bash-4.4+ (might be compatible with zsh too, untested)
 - tar, xz-utils, base64(coreutils) (on both ends!)
 
-Then to install, copy or link `envy` to somewhere within your `$PATH`, e.g. `/usr/bin/` or `~/bin/`. Create `~/.config/envy.d/` and start putting symlinks in there.
+Copy or link `envy` to somewhere within your `$PATH`, e.g. `/usr/bin/` or `~/bin/`. Create `~/.config/envy.d/` and start putting symlinks in there.
 
-To enable envy chaining: Link `envy` itself into `.config/envy.d/bin/envy`.
+To enable envy chaining: Symlink `envy` itself into `.config/envy.d/bin/envy`.
 
 For tab-completion: Copy or link `bash-completion` into `/usr/share/bash-completion/completions/envy` or `~/.local/share/bash-completion/completions/envy`.
 
 ## Configuration
 
-envy is configured through `$XDG_CONFIG_HOME/envy.d/`, which defaults to `$HOME/.config/envy.d/`. The exception to this is if you're already inside an envy session, then the path changes to `$ENV_HOME/.config/envy.d/`
+envy is configured through `$XDG_CONFIG_HOME/envy.d/`, which defaults to `$HOME/.config/envy.d/`. Except inside envy sessions, where it becomes `$ENV_HOME/.config/envy.d/`.
 
-Files underneath here are brought along into the target's `$ENV_HOME`. It is highly recommended to use symlinks where appropiate. Symlinks will be followed. Structure will be kept. A prime candidate to put here is your `.bashrc`. You may want to include `envy` itself to make it available on the target aswell.
+Files underneath here are copied into the target's `$ENV_HOME`. Symlinks are recommended where appropiate. Symlinks will be followed. Structure will be kept. A prime candidate to put here is your `.bashrc`. You may also want to include `envy` itself to enable envy chaining.
 
-The special file `env_commands` if present will be sourced at the end of the target's `.bashrc` when the shell starts. Its main use is to configure applications to use `$ENV_HOME` over `$HOME`. Uses shell syntax and resolves variables on the target accordingly.
+The special file `env_commands` if present will be sourced on the target after `.bashrc`. Its main use is to configure applications to prefer `$ENV_HOME` over `$HOME`. Uses shell syntax.
 
 Example config is available as `envy.d.example/`. Copy it to `$HOME/.config/envy.d` and rename.
 
 ## Terminology
 
 - __master__ is the machine originally executing envy and contains the envy config files and environment to bring.
-- __target__ is the user or host the environment will be transferred to. This can be another user on the same machine (usually `root` in the case of `sudo`/`su`) or another host (in the case of `ssh`)
-- __environment__ describes the files beneath `envy.d/` we bring. We are not actually taking environment variables with us, if you need them, have your bashrc set them up.
+- __target__ is the user or host the environment will be transferred to. For `sudo`/`su` this is another user account (usually `root`), for `ssh` another host.
+- __environment__ describes the files beneath `envy.d/` we bring. We are *not* actually taking environment variables with us. If you need them, have your bashrc set them up.
 
 ## Caveats (WIP)
 
@@ -56,8 +56,8 @@ Example config is available as `envy.d.example/`. Copy it to `$HOME/.config/envy
 
 ## Inspiration
 
-Most of the work started in my [LC_BASHRC](https://github.com/haarp/dotfiles/blob/e5456a112e57114a0bcf075909c471731ae611d6/.bashrc#L13) trick I previously used in my bashrc. By abusing most ssh server's defaults of accepting `LC_*` environment variables, I could take the bashrc with me through that, then source it on the other side with ssh's `RemoteCommand`. sudo and su worked similarly to how they do now, by writing temporary scripts.
+Most of the work started in my [LC_BASHRC](https://github.com/haarp/dotfiles/blob/e5456a112e57114a0bcf075909c471731ae611d6/.bashrc#L13) trick I previously used. By abusing most ssh server's defaults of accepting `LC_*` environment variables, I could take the bashrc with me, then source it on the other side with ssh's `RemoteCommand`. sudo and su worked similarly to how they do now, by writing temporary scripts.
 
-Minor credits for the idea of making envy a wrapper go to [sshrc](https://github.com/cdown/sshrc). It attempts to do something similar, although more complex and much less powerful.
+Minor credits for the idea of making envy a wrapper go to [sshrc](https://github.com/cdown/sshrc). It does something very similar, although more complex and much less powerful.
 
 envy may look simple, but it went through many iterations and trial&error to arrive at the methods used now.
