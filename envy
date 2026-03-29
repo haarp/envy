@@ -3,17 +3,6 @@
 
 set -e
 
-## Configs
-if [[ $ENV_HOME ]]; then
-	include_dir="$ENV_HOME"
-else
-	include_dir="${XDG_CONFIG_HOME:-$HOME/.config/}/envy.d/"
-	if ! [[ -d "$include_dir" && -n "$(ls -A "$include_dir")" ]]; then
-		echo "Please put something in here first: $include_dir" >&2
-		exit 2
-	fi
-fi
-
 ## Arguments
 case "$1" in
 	ssh|sudo|su) ;;
@@ -25,7 +14,7 @@ case "$1" in
 esac
 
 ## Environment
-env="$( tar cJf - -h -C "$include_dir" -- "." | base64 )"
+env="$( tar cJf - -h -C "${ENV_HOME:-${XDG_CONFIG_HOME:-$HOME/.config/}/envy.d/}" -- "." | base64 )"
 # `--rcfile` for interactive shells, `BASH_ENV` for non-interactive ones
 script='
 	set -e
