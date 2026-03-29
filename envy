@@ -52,7 +52,7 @@ script="
 subcmd="$1"; shift; case "$subcmd" in
 	ssh)
 		##LC_ENV="$env" ssh -t -o SendEnv=LC_ENV -o RemoteCommand="$script" "$@"
-		ssh -t -o RemoteCommand="${script//%/%%}" "$@"
+		exec ssh -t -o RemoteCommand="${script//%/%%}" "$@"
 		;;
 	sudo|su)
 		cmdfile="$(mktemp --suffix=".envy")" &&
@@ -62,9 +62,9 @@ subcmd="$1"; shift; case "$subcmd" in
 		chmod +rx "$cmdfile" &&	# make executable; and world-readable for `sudo -u luser`
 
 		if [[ "$subcmd" == "sudo" ]]; then
-			SHELL="$cmdfile" sudo -s "$@"
+			SHELL="$cmdfile" exec sudo -s "$@"
 		else
-			su -s "$cmdfile" "$@"
+			exec su -s "$cmdfile" "$@"
 		fi
 
 		rm -f "$cmdfile"	# if above failed
