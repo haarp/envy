@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # Environment carrier :3
 
-# TODO: minify bashrc?
-# strip leading whitespace, empty lines and comments
-#sed -e 's/^[\t ]*//' -e '/^$/d' -e 's/[\t ]\+#.*$//' -e '/^#/d' ~/.bashrc
-
 # Configs
 if [[ $ENV_HOME ]]; then
 	# FIXME: wrong path if user previously set divergent XDG_CONFIG_HOME
