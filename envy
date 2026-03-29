@@ -27,18 +27,17 @@ esac
 ## Environment
 env="$( tar cJf - -h -C "$include_dir" -- "." | base64 )"
 # `--rcfile` for interactive shells, `BASH_ENV` for non-interactive ones
-script="
+script='
 	set -e
-	export SHELL=\"/bin/bash\"
-	export ENV_HOME=\"\$( mktemp -d -p \"\${TMPDIR:-/tmp}\" -t \"env-\$USER.XXXXXX\" )\"
-	<<< \"$env\" base64 -d | tar xJf - --no-same-owner --skip-old-files -C \"\$ENV_HOME\"
-	echo ''  >> \"\$ENV_HOME/.bashrc\"
-	echo 'unset BASH_ENV'  >> \"\$ENV_HOME/.bashrc\"
-	echo 'if [[ -x \$ENV_HOME/env_commands ]]; then . \$ENV_HOME/env_commands; fi' >> \"\$ENV_HOME/.bashrc\"
-	echo 'trap -- \"rm -rf \\\"\$ENV_HOME\\\"\" EXIT' >> \"\$ENV_HOME/.bashrc\"
-	BASH_ENV=\"\$ENV_HOME/.bashrc\" exec bash --rcfile \"\$ENV_HOME/.bashrc\" \"\$@\"
-"
-
+	export SHELL="/bin/bash"
+	export ENV_HOME="$( mktemp -d -p "${TMPDIR:-/tmp}" -t "env-$USER.XXXXXX" )"
+	<<< '"'$env'"' base64 -d | tar xJf - --no-same-owner --skip-old-files -C "$ENV_HOME"
+	echo ""  >> "$ENV_HOME/.bashrc"
+	echo "unset BASH_ENV" >> "$ENV_HOME/.bashrc"
+	echo "if [[ -x $ENV_HOME/env_commands ]]; then . $ENV_HOME/env_commands; fi" >> "$ENV_HOME/.bashrc"
+	echo "trap -- \"rm -rf \\\"\$ENV_HOME\\\"\" EXIT" >> "$ENV_HOME/.bashrc"
+	BASH_ENV="$ENV_HOME/.bashrc" exec bash --rcfile "$ENV_HOME/.bashrc" "$@"
+'
 ## Business
 subcmd="$1"; shift; case "$subcmd" in
 	ssh)
