@@ -25,19 +25,19 @@ Make sure you meet these requirements (should be easy):
 
 Copy or link `envy` to somewhere within your `$PATH`, e.g. `/usr/bin/` or `~/bin/`. Create `~/.config/envy.d/` and start putting symlinks in there.
 
-To enable envy chaining: Symlink `envy` itself into `.config/envy.d/bin/envy`.
+To enable envy chaining: Symlink `envy` itself into `~/.config/envy.d/bin/envy`.
 
 For tab-completion: Copy or link `bash-completion` into `/usr/share/bash-completion/completions/envy` or `~/.local/share/bash-completion/completions/envy`.
 
 ## Configuration
 
-envy is configured through `$XDG_CONFIG_HOME/envy.d/`, which defaults to `$HOME/.config/envy.d/`. Except inside envy sessions, where it becomes `$ENV_HOME/.config/envy.d/`.
+envy is configured through `$XDG_CONFIG_HOME/envy.d/`, which defaults to `~/.config/envy.d/`. Except inside envy sessions, where it becomes `$ENV_HOME/.config/envy.d/`.
 
 Files underneath here are copied into the target's `$ENV_HOME`. Symlinks are recommended where appropiate. Symlinks will be followed. Structure will be kept. A prime candidate to put here is your `.bashrc`. You may also want to include `envy` itself to enable envy chaining.
 
 The special file `env_commands` if present will be sourced on the target after `.bashrc`. Its main use is to configure applications to prefer `$ENV_HOME` over `$HOME`. Uses shell syntax.
 
-Example config is available as `envy.d.example/`. Copy it to `$HOME/.config/envy.d` and rename.
+Example config is available as `envy.d.example/`. Copy it to `~/.config/envy.d` and rename.
 
 ## Terminology
 
