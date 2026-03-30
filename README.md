@@ -8,7 +8,7 @@ envy does not create symlinks to work. envy by itself does *not* touch the targe
 
 envy can be *chained*! Thus you could do `envy ssh foo` -> `envy ssh bar` -> `envy sudo` while keeping the same environment.
 
-envy tries to source your bashrc even for non-interactive shells. Yes, you can finally do `envy sudo <that-alias-you-always-wanted-to-use>`!
+envy tries to source your bashrc even for non-interactive shells. Yes, you can finally do `envy sudo <alias-you-always-wanted-to-use>`!
 
 ## Usage
 
@@ -27,7 +27,7 @@ Make sure you meet these requirements (should be easy):
 
 Copy or link `envy` to somewhere within your `$PATH`, e.g. `/usr/bin/` or `~/bin/`. Create `~/.config/envy.d/` and start putting symlinks in there.
 
-To enable envy chaining: Symlink `envy` itself into `~/.config/envy.d/bin/envy`.
+To enable envy chaining: Symlink `envy` itself into `~/.config/envy.d/bin/envy` and add `$ENV_HOME/bin` to `$PATH` in your bashrc.
 
 For tab-completion: Copy or link `bash-completion` into `/usr/share/bash-completion/completions/envy` or `~/.local/share/bash-completion/completions/envy`.
 
@@ -37,9 +37,9 @@ envy is configured through `$XDG_CONFIG_HOME/envy.d/`, which defaults to `~/.con
 
 Files underneath here are copied into the target's `$ENV_HOME`. Symlinks are recommended where appropiate. Symlinks will be followed. Structure will be kept. A prime candidate to put here is your `.bashrc`. You may also want to include `envy` itself to enable envy chaining.
 
-The special file `env_commands` if present will be sourced on the target after `.bashrc`. Its main use is to configure applications to prefer `$ENV_HOME` over `$HOME`. Uses shell syntax.
+The special file `env_commands` if present will be sourced on the target after `.bashrc`. Its main use is to configure applications to prefer `$ENV_HOME` over `$HOME` or do other things only relevant within an envy sessions. Uses shell syntax.
 
-Example config is available as `envy.d.example/`. Copy it to `~/.config/envy.d` and rename.
+Example config is available as `envy.d.example/`. Copy it to `~/.config/` and rename.
 
 ## Terminology
 
@@ -51,7 +51,7 @@ Example config is available as `envy.d.example/`. Copy it to `~/.config/envy.d` 
 
 - ssh: Cannot be used together with a command, e.g. this won't work: `envy ssh user@server 'ls -l'`.
 - ssh: The new shell might be considered a non-login shell, thus skipping displaying the MOTD and such.
-- ssh: If your env becomes very large, connections to some ssh servers like `dropbear` might mysteriously fail with errors such as `Broken pipe`. See [here](https://github.com/mkj/dropbear/issues/177) for details.
+- ssh: If your env becomes very large, connections to some ssh servers like `dropbear` might mysteriously fail with errors such as `Broken pipe`. See [here](https://github.com/mkj/dropbear/issues/177) for details. `openssh-server` is not affected.
 - sudo|su: If a command is supplied (e.g. `envy sudo nano /etc/hosts`), the new shell considers itself non-interactive. We use [BASH_ENV](https://www.gnu.org/software/bash/manual/bash.html#index-BASH_005fENV) to have it source the bashrc regardless, so set up your bashrc to *not* `return` in non-interactive shells. `shopt -s expand_aliases` might also be a worthwhile addition.
 - sudo: Will start an interactive session if no command is given, don't use `-i`.
 - If you require different configurations for different hosts, have your `.bashrc` handle that.
