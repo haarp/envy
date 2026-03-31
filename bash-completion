@@ -5,10 +5,10 @@ _comp_cmd_envy() {
 	fi
 
 	# current completion for subcmd
-	local subcmd="${COMP_WORDS[1]}" subcmd_comp temp
+	local subcmd="${COMP_WORDS[1]}" subcmd_comp
 	__load_completion "$subcmd"
-	read -ra temp <<< "$(complete -p "$subcmd")"
-	subcmd_comp="${temp[2]}"
+	read -ra subcmd_comp <<< "$(complete -p "$subcmd")"
+	subcmd_comp="${subcmd_comp[2]}"
 	[[ "$subcmd_comp" ]] || return 1
 
 	# fool the next call
