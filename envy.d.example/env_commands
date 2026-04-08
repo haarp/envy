@@ -1,1 +1,7 @@
+# bash completions (compgen -G equivalent to globbing with nullglob)
+while read line; do
+    source "$line"
+done <<< $(compgen -G "$ENV_HOME/.local/share/bash-completion/completions/*")
+# git cannot be controlled through env var :(
+alias git="git -c \"include.path=$ENV_HOME/.config/git/config\""
 export HTOPRC="$ENV_HOME/.config/htop/htoprc"
