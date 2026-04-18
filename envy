@@ -34,18 +34,18 @@ subcmd="$1"; shift; case "$subcmd" in
 		exec ssh -t -o RemoteCommand="${script//%/%%}" "$@"
 		;;
 	sudo|su)
-		cmdfile="$(mktemp --suffix=".envy")"
-		echo '#!/bin/bash' > "$cmdfile"
-		echo "rm -f \"$cmdfile\"" >> "$cmdfile"
-		echo "$script" >> "$cmdfile"
-		chmod +rx "$cmdfile"	# make executable; and world-readable for `sudo -u luser`
+		wrapper="$(mktemp --suffix=".envy")"
+		echo '#!/bin/bash' > "$wrapper"
+		echo "rm -f \"$wrapper\"" >> "$wrapper"
+		echo "$script" >> "$wrapper"
+		chmod +rx "$wrapper"	# make executable; and world-readable for `sudo -u luser`
 
 		if [[ "$subcmd" == "sudo" ]]; then
-			SHELL="$cmdfile" exec sudo -s "$@"
+			SHELL="$wrapper" exec sudo -s "$@"
 		else
-			exec su -s "$cmdfile" "$@"
+			exec su -s "$wrapper" "$@"
 		fi
 
-		rm -f "$cmdfile"	# if above failed
+		rm -f "$wrapper"	# if above failed
 		;;
 esac
