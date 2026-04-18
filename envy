@@ -3,6 +3,15 @@
 
 set -e
 
+# Create self-deleting wrapper as `$wrapper` that calls bash with our bashrc; can be used as SHELL
+function create_wrapper() {
+	wrapper="$(mktemp --suffix=".envy")"
+	echo '#!/bin/bash' > "$wrapper"
+	echo "rm -f \"$wrapper\"" >> "$wrapper"
+	echo "$script" >> "$wrapper"
+	chmod +rx "$wrapper"	# make executable; and world-readable for `sudo -u luser`
+}
+
 ## Arguments
 case "$1" in
 	ssh|sudo|su) ;;
@@ -33,19 +42,13 @@ subcmd="$1"; shift; case "$subcmd" in
 	ssh)
 		exec ssh -t -o RemoteCommand="${script//%/%%}" "$@"
 		;;
-	sudo|su)
-		wrapper="$(mktemp --suffix=".envy")"
-		echo '#!/bin/bash' > "$wrapper"
-		echo "rm -f \"$wrapper\"" >> "$wrapper"
-		echo "$script" >> "$wrapper"
-		chmod +rx "$wrapper"	# make executable; and world-readable for `sudo -u luser`
-
-		if [[ "$subcmd" == "sudo" ]]; then
-			SHELL="$wrapper" exec sudo -s "$@"
-		else
-			exec su -s "$wrapper" "$@"
-		fi
-
-		rm -f "$wrapper"	# if above failed
+	sudo)
+		create_wrapper
+		SHELL="$wrapper" exec sudo -s "$@"
+		;;
+	su)
+		create_wrapper
+		exec su -s "$wrapper" "$@"
 		;;
 esac
+rm -f "$wrapper"	# if above failed
