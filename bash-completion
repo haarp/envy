@@ -1,6 +1,6 @@
 _comp_cmd_envy() {
 	if [[ $COMP_CWORD -eq 1 ]]; then
-		COMPREPLY=( $(compgen -W "ssh sudo su" -- "${COMP_WORDS[COMP_CWORD]}") )
+		COMPREPLY=( $(compgen -W "ssh sudo su screen" -- "${COMP_WORDS[COMP_CWORD]}") )
 		return 0
 	fi
 

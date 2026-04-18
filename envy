@@ -14,10 +14,10 @@ function create_wrapper() {
 
 ## Arguments
 case "$1" in
-	ssh|sudo|su) ;;
+	ssh|sudo|su|screen) ;;
 	*)
-		echo "Take your environment with you through ssh|sudo|su! :3" >&2
-		echo "Usage: $(basename "$0") <ssh|sudo|su> [args...]" >&2
+		echo "Take your environment with you through ssh|sudo|su|screen! :3" >&2
+		echo "Usage: $(basename "$0") <ssh|sudo|su|screen> [args...]" >&2
 		exit 1
 		;;
 esac
@@ -49,6 +49,11 @@ subcmd="$1"; shift; case "$subcmd" in
 	su)
 		create_wrapper
 		exec su -s "$wrapper" "$@"
+		;;
+	screen)
+		# FIXME: screen needs to keep wrapper around for creating new windows (Ctrl+a, c)
+		create_wrapper
+		screen -s "$wrapper" -t "$(basename "$0")" "$@"
 		;;
 esac
 rm -f "$wrapper"	# if above failed
