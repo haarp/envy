@@ -23,7 +23,7 @@ script='
 	<<< '"'$env'"' base64 -d | tar xJf - --no-same-owner --skip-old-files -C "$ENV_HOME"
 	echo ""  >> "$ENV_HOME/.bashrc"
 	sed -i "1i unset BASH_ENV" "$ENV_HOME/.bashrc"
-	echo "if [[ -s $ENV_HOME/env_commands ]]; then . $ENV_HOME/env_commands; fi" >> "$ENV_HOME/.bashrc"
+	echo "if [[ -s \"\$ENV_HOME/env_commands\" ]]; then . \"\$ENV_HOME/env_commands\"; fi" >> "$ENV_HOME/.bashrc"
 	echo "trap -- \"rm -rf \\\"\$ENV_HOME\\\"\" EXIT" >> "$ENV_HOME/.bashrc"
 	BASH_ENV="$ENV_HOME/.bashrc" exec bash --rcfile "$ENV_HOME/.bashrc" "$@"
 '
