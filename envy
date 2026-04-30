@@ -51,7 +51,6 @@ subcmd="$1"; shift; case "$subcmd" in
 		exec su -s "$wrapper" "$@"
 		;;
 	screen)
-		# FIXME: screen needs to keep wrapper around for creating new windows (Ctrl+a, c)
 		create_wrapper
 		exec screen -s "$wrapper" -t "${0##*/}" "$@"
 		;;
