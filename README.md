@@ -63,3 +63,7 @@ Most of the work started in my [LC_BASHRC](https://github.com/haarp/dotfiles/blo
 Minor credits for the idea of making envy a wrapper go to [sshrc](https://github.com/cdown/sshrc). It does something very similar, although more complex and much less powerful.
 
 envy may look simple, but it went through many iterations and trial&error to arrive at the methods used now.
+
+## Disclaimer
+
+No machine-generated code was used in thist project.
