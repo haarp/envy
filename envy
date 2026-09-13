@@ -23,13 +23,13 @@ case "$1" in
 esac
 
 ## Environment
-env="$( tar cJf - -h -C "${ENV_HOME:-${XDG_CONFIG_HOME:-$HOME/.config/}/envy.d/}" -- "." | base64 )"
+env="$( tar cJf - -h -C "${ENV_HOME:-${XDG_CONFIG_HOME:-$HOME/.config/}}" -- "envy.d" | base64 )"
 # `--rcfile` for interactive shells, `BASH_ENV` for non-interactive ones
 script='
 	set -e
 	export SHELL="/bin/bash"
 	export ENV_HOME="$( mktemp -d -p "${TMPDIR:-/tmp}" -t "env-$USER.XXXXXX" )"
-	<<< '"'$env'"' base64 -d | tar xJf - --no-same-owner --skip-old-files -C "$ENV_HOME"
+	echo '"'$env'"' | base64 -d | xz -d | tar xf - --no-same-owner --strip-components=1 -C "$ENV_HOME"
 	echo ""  >> "$ENV_HOME/.bashrc"
 	sed -i "1i unset BASH_ENV" "$ENV_HOME/.bashrc"
 	echo "if [[ -s \"\$ENV_HOME/env_commands\" ]]; then . \"\$ENV_HOME/env_commands\"; fi" >> "$ENV_HOME/.bashrc"
