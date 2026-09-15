@@ -23,7 +23,11 @@ case "$1" in
 esac
 
 ## Environment
-env="$( tar cJf - -h -C "${ENV_HOME:-${XDG_CONFIG_HOME:-$HOME/.config/}}" -- "envy.d" | base64 )"
+if [[ "$ENV_HOME" ]]
+	then src="$ENV_HOME"; dir="."
+	else src="${XDG_CONFIG_HOME:-$HOME/.config/}"; dir="envy.d"
+fi
+env="$( tar cJf - -h -C "$src" -- "$dir" | base64 )"
 # `--rcfile` for interactive shells, `BASH_ENV` for non-interactive ones
 script='
 	set -e
